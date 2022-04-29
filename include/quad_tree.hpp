@@ -3,21 +3,40 @@
 
 #include <vector>
 #include <memory>
+#include <array>
 
 #include <raylib.h>
 
-namespace net {
-	class item {
-		Vector4 bounds;
+namespace qtv {
+	class quad_node;
 
-		virtual void draw() = 0;
+	class quad_item {
+	public:
+		virtual void draw();
+		virtual void draw_contents();
+
+		void set_parent(quad_node* parent);
+		[[nodiscard]] quad_node* get_parent() const;
+		[[nodiscard]] quad_node* get_top_parent() const;
+
+		Rectangle bounds{};
+		size_t connections{};
+
+	protected:
+		quad_node* parent_{};
 	};
 
-	class node {
-		
+	class quad_node : public quad_item {
+	public:
+		void draw_contents() override;
+
+		void add_item(std::unique_ptr<quad_item> item);
 
 	private:
-		std::vector<std::unique_ptr<item>> children_;
+		void create_leafs();
+
+		std::array<std::unique_ptr<quad_node>, 4> leafs_;
+		std::vector<std::unique_ptr<quad_item>> items_;
 	};
 }
 
