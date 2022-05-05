@@ -1,4 +1,5 @@
 #include "tree/balloon_tree.hpp"
+#include "tree/quad_tree.hpp"
 #include "tree/radial_tree.hpp"
 
 #include <raylib.h>
@@ -24,36 +25,56 @@ void process_movement(Camera2D& camera) {
 }
 
 int main() {
-	auto root = std::make_unique<qtv::radial_tree>();
+	auto root = std::make_unique<ntl::balloon_tree>();
 	root->set_pos({300, 200});
-	root->set_step(40.0f);
-	/*root->set_radius(150.0f);
-	root->set_max_branches(5);*/
+	//root->set_size({500, 500});
+	//root->set_step(40.0f);
+	root->set_radius(150.0f);
+	root->set_max_branches(6);
 
-	auto node1 = root->add_child(std::make_unique<qtv::node>());
-	node1->add_child(std::make_unique<qtv::node>());
-	node1->add_child(std::make_unique<qtv::node>());
-	auto node13 = node1->add_child(std::make_unique<qtv::node>());
-	auto node131 = node13->add_child(std::make_unique<qtv::node>());
-	node131->add_child(std::make_unique<qtv::node>());
-	node131->add_child(std::make_unique<qtv::node>());
-	node13->add_child(std::make_unique<qtv::node>());
-	node13->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	auto node4 = root->add_child(std::make_unique<qtv::node>());
-	node4->add_child(std::make_unique<qtv::node>());
-	node4->add_child(std::make_unique<qtv::node>());
-	node4->add_child(std::make_unique<qtv::node>());
-	node4->add_child(std::make_unique<qtv::node>());
-	auto node5 = root->add_child(std::make_unique<qtv::node>());
-	auto node51 = node5->add_child(std::make_unique<qtv::node>());
-	node51->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	auto node7 = root->add_child(std::make_unique<qtv::node>());
-	node7->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
+	/*for (size_t i = 0; i < 11; i++) {
+		root->add_child(std::make_unique<ntl::node>());
+	}*/
+
+	/*auto node1 = root->add_child(std::make_unique<ntl::node>());
+	for (size_t i = 0; i < 6; i++) {
+		node1->add_child(std::make_unique<ntl::node>());
+	}*/
+
+	auto node1 = root->add_child(std::make_unique<ntl::node>());
+	node1->add_child(std::make_unique<ntl::node>());
+	node1->add_child(std::make_unique<ntl::node>());
+	auto node13 = node1->add_child(std::make_unique<ntl::node>());
+	auto node131 = node13->add_child(std::make_unique<ntl::node>());
+	node131->add_child(std::make_unique<ntl::node>());
+	node131->add_child(std::make_unique<ntl::node>());
+	node13->add_child(std::make_unique<ntl::node>());
+	node13->add_child(std::make_unique<ntl::node>());
+	root->add_child(std::make_unique<ntl::node>());
+	auto node3 = root->add_child(std::make_unique<ntl::node>());
+	node3->add_child(std::make_unique<ntl::node>());
+	node3->add_child(std::make_unique<ntl::node>());
+	auto node4 = root->add_child(std::make_unique<ntl::node>());
+	node4->add_child(std::make_unique<ntl::node>());
+	node4->add_child(std::make_unique<ntl::node>());
+	node4->add_child(std::make_unique<ntl::node>());
+	node4->add_child(std::make_unique<ntl::node>());
+	auto node5 = root->add_child(std::make_unique<ntl::node>());
+	auto node51 = node5->add_child(std::make_unique<ntl::node>());
+	node51->add_child(std::make_unique<ntl::node>());
+	root->add_child(std::make_unique<ntl::node>());
+	auto node7 = root->add_child(std::make_unique<ntl::node>());
+	node7->add_child(std::make_unique<ntl::node>());
+	auto node8 = root->add_child(std::make_unique<ntl::node>());
+	auto node81 = node8->add_child(std::make_unique<ntl::node>());
+	auto node811 = node81->add_child(std::make_unique<ntl::node>());
+	node811->add_child(std::make_unique<ntl::node>());
+	node811->add_child(std::make_unique<ntl::node>());
+	node811->add_child(std::make_unique<ntl::node>());
+	node811->add_child(std::make_unique<ntl::node>());
+	node811->add_child(std::make_unique<ntl::node>());
+	node81->add_child(std::make_unique<ntl::node>());
+	root->add_child(std::make_unique<ntl::node>());
 
 	root->compute();
 

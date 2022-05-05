@@ -3,7 +3,7 @@
 
 #include "node.hpp"
 
-namespace qtv {
+namespace ntl {
 	// Example https://imgur.com/sVSLopo
 
 	// TODO:
@@ -17,7 +17,7 @@ namespace qtv {
 		void set_max_branches(size_t max_branches);
 
 	private:
-		void compute_branch(node* item, const Vector2& pos, float radius) const;
+		void compute_branch(node* item, const Vector2& pos, float radius, float branch_angle) const;
 
 		float radius_{};
 		size_t max_branches_ = 0;

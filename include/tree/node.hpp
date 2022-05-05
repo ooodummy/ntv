@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-namespace qtv {
+namespace ntl {
 	class item {
 	public:
 		//std::string get_title();
@@ -24,6 +24,8 @@ namespace qtv {
 		node* add_child(std::unique_ptr<node> item);
 		std::vector<std::unique_ptr<node>>& get_children();
 
+		void limit_branches(size_t max);
+
 		void set_link(bool link);
 		[[nodiscard]] bool get_link() const;
 
@@ -38,6 +40,7 @@ namespace qtv {
 		bool is_link_ = false;
 
 		Vector2 pos_;
+		Vector2 velocity_;
 	};
 
 	class tree : public node {
