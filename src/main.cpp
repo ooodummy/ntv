@@ -26,27 +26,38 @@ void process_movement(Camera2D& camera) {
 int main() {
 	auto root = std::make_unique<qtv::radial_tree>();
 	root->set_pos({300, 200});
-	root->set_step(20.0f);
+	root->set_step(40.0f);
 	/*root->set_radius(150.0f);
 	root->set_max_branches(5);*/
 
+	auto node1 = root->add_child(std::make_unique<qtv::node>());
+	node1->add_child(std::make_unique<qtv::node>());
+	node1->add_child(std::make_unique<qtv::node>());
+	auto node13 = node1->add_child(std::make_unique<qtv::node>());
+	auto node131 = node13->add_child(std::make_unique<qtv::node>());
+	node131->add_child(std::make_unique<qtv::node>());
+	node131->add_child(std::make_unique<qtv::node>());
+	node13->add_child(std::make_unique<qtv::node>());
+	node13->add_child(std::make_unique<qtv::node>());
 	root->add_child(std::make_unique<qtv::node>());
 	root->add_child(std::make_unique<qtv::node>());
+	auto node4 = root->add_child(std::make_unique<qtv::node>());
+	node4->add_child(std::make_unique<qtv::node>());
+	node4->add_child(std::make_unique<qtv::node>());
+	node4->add_child(std::make_unique<qtv::node>());
+	node4->add_child(std::make_unique<qtv::node>());
+	auto node5 = root->add_child(std::make_unique<qtv::node>());
+	auto node51 = node5->add_child(std::make_unique<qtv::node>());
+	node51->add_child(std::make_unique<qtv::node>());
 	root->add_child(std::make_unique<qtv::node>());
+	auto node7 = root->add_child(std::make_unique<qtv::node>());
+	node7->add_child(std::make_unique<qtv::node>());
 	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	root->add_child(std::make_unique<qtv::node>());
-	auto node2 = root->add_child(std::make_unique<qtv::node>());
-	node2->add_child(std::make_unique<qtv::node>());
-	node2->add_child(std::make_unique<qtv::node>());
 	root->add_child(std::make_unique<qtv::node>());
 
 	root->compute();
 
-	InitWindow(720, 480, "Quad tree view");
+	InitWindow(720, 480, "Node tree layout");
 
 	Camera2D camera = {
 		{0.0f, 0.0f},
