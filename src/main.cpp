@@ -2,112 +2,76 @@
 #include "tree/quad_tree.hpp"
 #include "tree/radial_tree.hpp"
 
-#include <raylib.h>
+#include "test.hpp"
 
-void process_movement(Camera2D& camera) {
-	if (IsKeyDown(KEY_RIGHT)) camera.target.x += 2;
-	if (IsKeyDown(KEY_LEFT)) camera.target.x -= 2;
-	if (IsKeyDown(KEY_DOWN)) camera.target.y += 2;
-	if (IsKeyDown(KEY_UP)) camera.target.y -= 2;
-
-	if (IsKeyDown(KEY_A)) camera.rotation--;
-	if (IsKeyDown(KEY_S)) camera.rotation++;
-
-	camera.zoom += ((float)GetMouseWheelMove()*0.05f);
-
-	if (camera.zoom > 3.0f) camera.zoom = 3.0f;
-	else if (camera.zoom < 0.1f) camera.zoom = 0.1f;
-
-	if (IsKeyPressed(KEY_R)) {
-		camera.zoom = 1.0f;
-		camera.rotation = 0.0f;
-	}
-}
+#include <fmt/format.h>
 
 int main() {
-	auto root = std::make_unique<ntl::balloon_tree>();
-	root->set_pos({300, 200});
-	//root->set_size({500, 500});
-	//root->set_step(40.0f);
-	root->set_radius(150.0f);
-	root->set_max_branches(6);
+	auto tree = ntv::make_test_tree<ntv::radial_tree>();
+	tree->set_label("Primary");
+	tree->set_pos({300, 200});
+	//tree->set_size({500, 500});
+	tree->set_step(40.0f);
+	//tree->set_radius(150.0f);
+	//tree->set_max_branches(6);
 
-	/*for (size_t i = 0; i < 11; i++) {
-		root->add_child(std::make_unique<ntl::node>());
-	}*/
+	tree->compute();
 
-	/*auto node1 = root->add_child(std::make_unique<ntl::node>());
-	for (size_t i = 0; i < 6; i++) {
-		node1->add_child(std::make_unique<ntl::node>());
-	}*/
+	HelloImGui::Run([&]{
+		tree->draw();
 
-	auto node1 = root->add_child(std::make_unique<ntl::node>());
-	node1->add_child(std::make_unique<ntl::node>());
-	node1->add_child(std::make_unique<ntl::node>());
-	auto node13 = node1->add_child(std::make_unique<ntl::node>());
-	auto node131 = node13->add_child(std::make_unique<ntl::node>());
-	node131->add_child(std::make_unique<ntl::node>());
-	node131->add_child(std::make_unique<ntl::node>());
-	node13->add_child(std::make_unique<ntl::node>());
-	node13->add_child(std::make_unique<ntl::node>());
-	root->add_child(std::make_unique<ntl::node>());
-	auto node3 = root->add_child(std::make_unique<ntl::node>());
-	node3->add_child(std::make_unique<ntl::node>());
-	node3->add_child(std::make_unique<ntl::node>());
-	auto node4 = root->add_child(std::make_unique<ntl::node>());
-	node4->add_child(std::make_unique<ntl::node>());
-	node4->add_child(std::make_unique<ntl::node>());
-	node4->add_child(std::make_unique<ntl::node>());
-	node4->add_child(std::make_unique<ntl::node>());
-	auto node5 = root->add_child(std::make_unique<ntl::node>());
-	auto node51 = node5->add_child(std::make_unique<ntl::node>());
-	node51->add_child(std::make_unique<ntl::node>());
-	root->add_child(std::make_unique<ntl::node>());
-	auto node7 = root->add_child(std::make_unique<ntl::node>());
-	node7->add_child(std::make_unique<ntl::node>());
-	auto node8 = root->add_child(std::make_unique<ntl::node>());
-	auto node81 = node8->add_child(std::make_unique<ntl::node>());
-	auto node811 = node81->add_child(std::make_unique<ntl::node>());
-	node811->add_child(std::make_unique<ntl::node>());
-	node811->add_child(std::make_unique<ntl::node>());
-	node811->add_child(std::make_unique<ntl::node>());
-	node811->add_child(std::make_unique<ntl::node>());
-	node811->add_child(std::make_unique<ntl::node>());
-	node81->add_child(std::make_unique<ntl::node>());
-	root->add_child(std::make_unique<ntl::node>());
+		if (ImGui::Begin("Settings")) {
+			if (ImGui::CollapsingHeader("Node list")) {
+				auto add_node_settings = [](ntv::node* item) -> void {
+					auto impl_add_node_settings = [](ntv::node* item, auto self_ref, const std::string& id = "", ntv::node* parent = nullptr, size_t index = 0) mutable -> void {// NOLINT(misc-no-recursion)
+						if (ImGui::CollapsingHeader(fmt::format("{} - {}##main_header{}", item->get_label(), item->get_children().size(), id).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+							if (!parent) {
+								if (ImGui::Button(fmt::format("Compute##compute_button{}", id).c_str())) {
+									item->compute();
+								}
+								ImGui::Text("Position");
+								ImGui::SameLine();
+								ImGui::PushItemWidth(100.0f);
+								if (ImGui::InputFloat(fmt::format("##input_x_pos{}", id).c_str(), &item->pos_.x)) {
+									item->compute();
+								}
+								ImGui::SameLine();
+								if (ImGui::InputFloat(fmt::format("##input_y_pos{}", id).c_str(), &item->pos_.y)) {
+									item->compute();
+								}
+								ImGui::PopItemWidth();
+							}
+							if (ImGui::Button(fmt::format("Add##add_button{}", id).c_str())) {
+								item->make_node();
+								item->compute();
+							}
+							if (parent) {
+								ImGui::SameLine();
+								if (ImGui::Button(fmt::format("Delete##delete_button{}", id).c_str())) {
+									parent->remove_node(index);
+									parent->compute();
+								}
+							}
+							ImGui::Indent(12.0f);
+							for (size_t i = 0; i < item->get_children().size(); i++) {
+								auto& child = item->get_children()[i];
 
-	root->compute();
+								self_ref(child.get(), self_ref, id + std::to_string(i), item, i);
+							}
+							ImGui::Unindent(12.0f);
+						}
+					};
 
-	InitWindow(720, 480, "Node tree layout");
+					impl_add_node_settings(item, impl_add_node_settings);
+				};
 
-	Camera2D camera = {
-		{0.0f, 0.0f},
-		{0.0f, 0.0f},
-		0.0f,
-		1.0f
-	};
+				add_node_settings(tree.get());
+			}
+			ImGui::End();
+		}
 
-	SetTargetFPS(60);
-
-	while (!WindowShouldClose()) {
-		process_movement(camera);
-
-		BeginDrawing();
-
-		ClearBackground(BLACK);
-
-		BeginMode2D(camera);
-
-		root->draw();
-
-		EndMode2D();
-
-		DrawFPS(0.0f, 0.0f);
-
-		EndDrawing();
-	}
-
-	CloseWindow();
+		ImGui::ShowDemoWindow();
+	}, {720.0f, 480.0f}, "Node tree view");
 
 	return 0;
 }

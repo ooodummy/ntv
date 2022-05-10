@@ -3,7 +3,7 @@
 
 #include "node.hpp"
 
-namespace ntl {
+namespace ntv {
 	void apply_effects(node* item);
 }
 

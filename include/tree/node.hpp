@@ -8,11 +8,18 @@
 #include <memory>
 #include <string>
 
-namespace ntl {
+// https://cs.brown.edu/people/rtamassi/gdhandbook/chapters/trees.pdf
+
+namespace ntv {
 	class item {
 	public:
-		//std::string get_title();
-		//std::vector<std::string> get_descriptors();
+		void set_label(const std::string& label);
+		const std::string& get_label() const;
+
+		//const std::vector<std::string>& get_descriptors();
+
+	protected:
+		std::string label_ = "Undefined";
 	};
 
 	class node : public item {
@@ -21,16 +28,22 @@ namespace ntl {
 		[[nodiscard]] node* get_parent() const;
 		[[nodiscard]] node* get_top_parent() const;
 
-		node* add_child(std::unique_ptr<node> item);
+		node* add_node(std::unique_ptr<node> item);
+		node* make_node();
+
+		void remove_node(size_t index);
+
 		std::vector<std::unique_ptr<node>>& get_children();
 
 		void limit_branches(size_t max);
 
+		virtual void compute();
+
 		void set_link(bool link);
 		[[nodiscard]] bool get_link() const;
 
-		void set_pos(Vector2 pos);
-		[[nodiscard]] Vector2 get_pos() const;
+		void set_pos(ImVec2 pos);
+		[[nodiscard]] ImVec2 get_pos() const;
 
 	protected:
 		node* parent_;
@@ -39,14 +52,30 @@ namespace ntl {
 		// Used for positioning some tree layout types
 		bool is_link_ = false;
 
-		Vector2 pos_;
-		Vector2 velocity_;
+		// !!!
+	public:
+		ImVec2 pos_;
+		ImVec2 velocity_;
 	};
 
 	class tree : public node {
 	public:
-		virtual void compute() = 0;
 		virtual void draw();
+
+		struct computed_properties_t {
+			float area;
+			float aspect_ratio;
+			float subtree_separation;
+			float closest_leaf;
+			float furthest_leaf;
+			float size;
+			float total_edge_length;
+			float average_edge_length;
+			float maximum_edge_length;
+			float uniform_edge_length;
+			float angular_resolution;
+			float symmetry;
+		};
 	};
 }
 

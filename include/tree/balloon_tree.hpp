@@ -3,12 +3,8 @@
 
 #include "node.hpp"
 
-namespace ntl {
-	// Example https://imgur.com/sVSLopo
-
-	// TODO:
-	//  Set child balloon radius to be proper instead of just half
-	//  Also change the angle to not just be using step for when some children have another radius
+namespace ntv {
+	// https://jgaa.info/accepted/2007/LinYen2007.11.2.pdf
 	class balloon_tree : public tree {
 	public:
 		void compute() override;
@@ -17,7 +13,7 @@ namespace ntl {
 		void set_max_branches(size_t max_branches);
 
 	private:
-		void compute_branch(node* item, const Vector2& pos, float radius, float branch_angle) const;
+		void compute_branch(node* item, const ImVec2& pos, float radius, float branch_angle) const;
 
 		float radius_{};
 		size_t max_branches_ = 0;

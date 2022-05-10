@@ -1,6 +1,6 @@
 #include "tree/radial_tree.hpp"
 
-void ntl::radial_tree::compute_branch(ntl::node* item, Vector2 pos, float angle_range, float angle, size_t depth) const { // NOLINT(misc-no-recursion)
+void ntv::radial_tree::compute_branch(ntv::node* item, ImVec2 pos, float angle_range, float angle, size_t depth) const { // NOLINT(misc-no-recursion)
 	const auto child_angle_range = angle_range / static_cast<float>(item->get_children().size());
 	float child_angle = item->get_parent() ? angle + (-angle_range + child_angle_range) / 2.0f : angle;
 
@@ -17,10 +17,10 @@ void ntl::radial_tree::compute_branch(ntl::node* item, Vector2 pos, float angle_
 	}
 }
 
-void ntl::radial_tree::compute() {
+void ntv::radial_tree::compute() {
 	compute_branch(this, get_pos(), M_PI * 2.0f, 0.0f, 0);
 }
 
-void ntl::radial_tree::set_step(float step) {
+void ntv::radial_tree::set_step(float step) {
 	step_size_ = step;
 }

@@ -3,8 +3,8 @@
 
 #include "node.hpp"
 
-namespace ntl {
-	// Algorithm https://stackoverflow.com/questions/33328245/radial-tree-layout-algorithm
+namespace ntv {
+	// https://stackoverflow.com/questions/33328245/radial-tree-layout-algorithm
 	class radial_tree : public tree {
 	public:
 		void compute() override;
@@ -12,7 +12,7 @@ namespace ntl {
 		void set_step(float step);
 
 	private:
-		void compute_branch(node* item, Vector2 pos, float angle_range, float angle, size_t depth) const;
+		void compute_branch(node* item, ImVec2 pos, float angle_range, float angle, size_t depth) const;
 
 		float step_size_{};
 	};

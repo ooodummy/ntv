@@ -2,7 +2,7 @@
 #define _FORMAT_HPP_
 
 namespace qtv {
-	// TODO:
+	//void load_file();
 }
 
 #endif
