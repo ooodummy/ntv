@@ -71,7 +71,7 @@ int main() {
 			ImGui::End();
 		}
 
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 	}, {720.0f, 480.0f}, "Node tree view");
 
 	return 0;

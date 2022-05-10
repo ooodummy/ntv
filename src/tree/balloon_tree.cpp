@@ -4,7 +4,12 @@
 void ntv::balloon_tree::compute_branch(ntv::node* item, const ImVec2& pos, float radius, float branch_angle) const { // NOLINT(misc-no-recursion)
 	item->limit_branches(max_branches_);
 
-	const auto step = static_cast<float>(M_PI) * 2.0f / (static_cast<float>(item->get_children().size()) + 1.0f);
+	auto segments = item->get_children().size();
+
+	if (item->get_parent())
+		segments += 1.0f;
+
+	const auto step = static_cast<float>(M_PI) * 2.0f / static_cast<float>(segments);
 	float angle = static_cast<float>(branch_angle) + step - static_cast<float>(M_PI);
 
 	for (auto& child : item->get_children()) {

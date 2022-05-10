@@ -62,7 +62,7 @@ namespace ntv {
 	public:
 		virtual void draw();
 
-		struct computed_properties_t {
+		struct aesthetic_properties_t {
 			float area;
 			float aspect_ratio;
 			float subtree_separation;
@@ -76,6 +76,8 @@ namespace ntv {
 			float angular_resolution;
 			float symmetry;
 		};
+
+		aesthetic_properties_t get_aesthetic_properties();
 	};
 }
 

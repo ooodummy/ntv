@@ -122,3 +122,36 @@ void draw_node(ntv::node* item) { // NOLINT(misc-no-recursion)
 void ntv::tree::draw() {
 	draw_node(this);
 }
+
+// https://cs.brown.edu/people/rtamassi/gdhandbook/chapters/trees.pdf
+// 5.1.12
+ntv::tree::aesthetic_properties_t ntv::tree::get_aesthetic_properties() {
+	aesthetic_properties_t ret{};
+
+	float total_nodes;
+	ImVec2 min_pos = {FLT_MAX, FLT_MAX};
+	ImVec2 max_pos = {FLT_MIN, FLT_MIN};
+
+	auto gather_info = [&](ntv::node* item) -> void {
+		auto impl_gather_info = [&](ntv::node* item, auto self_ref, const std::string& id = "", ntv::node* parent = nullptr, size_t index = 0) mutable -> void {// NOLINT(misc-no-recursion)
+			for (auto& child : item->get_children()) {
+				total_nodes++;
+				auto pos = child->get_pos();
+				min_pos.x = std::min(min_pos.x, pos.x);
+				min_pos.y = std::min(min_pos.y, pos.y);
+				max_pos.x = std::max(max_pos.x, pos.x);
+				max_pos.y = std::max(max_pos.y, pos.y);
+
+				self_ref(child.get(), self_ref);
+			}
+		};
+
+		impl_gather_info(item, impl_gather_info);
+	};
+
+	gather_info(this);
+
+	gather_info_impl(this, gather_info_impl);
+
+	return ntv::tree::aesthetic_properties_t();
+}
