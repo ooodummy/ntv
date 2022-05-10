@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(ntl)
+project(ntv)
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(lib)
 
-set(DHELLOIMGUI_USE_SDL_OPENGL3 ON CACHE BOOL "" FORCE)
+set(HELLOIMGUI_USE_SDL_OPENGL3 ON CACHE BOOL "" FORCE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${HELLOIMGUI_BASEPATH}/hello_imgui_cmake)
 
 include(hello_imgui_add_app)

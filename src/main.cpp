@@ -6,6 +6,7 @@
 
 #include <fmt/format.h>
 
+#undef main
 int main() {
 	auto tree = ntv::make_test_tree<ntv::radial_tree>();
 	tree->set_label("Primary");
