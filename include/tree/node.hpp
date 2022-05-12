@@ -14,7 +14,7 @@ namespace ntv {
 	class item {
 	public:
 		void set_label(const std::string& label);
-		const std::string& get_label() const;
+		[[nodiscard]] const std::string& get_label() const;
 
 		//const std::vector<std::string>& get_descriptors();
 
@@ -42,8 +42,8 @@ namespace ntv {
 		void set_link(bool link);
 		[[nodiscard]] bool get_link() const;
 
-		void set_pos(ImVec2 pos);
-		[[nodiscard]] ImVec2 get_pos() const;
+		void set_pos(glm::vec2 pos);
+		[[nodiscard]] glm::vec2 get_pos() const;
 
 	protected:
 		node* parent_;
@@ -54,8 +54,8 @@ namespace ntv {
 
 		// !!!
 	public:
-		ImVec2 pos_;
-		ImVec2 velocity_;
+		glm::vec2 pos_;
+		glm::vec2 velocity_;
 	};
 
 	class tree : public node {
@@ -63,12 +63,17 @@ namespace ntv {
 		virtual void draw();
 
 		struct aesthetic_properties_t {
+			// Min and max of all the points are used to get size
+			glm::vec2 size;
+
+			// Convex hull area of all the points
+			// Or it will just be the size
 			float area;
 			float aspect_ratio;
 			float subtree_separation;
 			float closest_leaf;
 			float furthest_leaf;
-			float size;
+			float length;
 			float total_edge_length;
 			float average_edge_length;
 			float maximum_edge_length;

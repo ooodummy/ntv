@@ -52,11 +52,11 @@ bool ntv::node::get_link() const {
 	return is_link_;
 }
 
-void ntv::node::set_pos(ImVec2 pos) {
+void ntv::node::set_pos(glm::vec2 pos) {
 	pos_ = pos;
 }
 
-ImVec2 ntv::node::get_pos() const {
+glm::vec2 ntv::node::get_pos() const {
 	return pos_;
 }
 
@@ -69,7 +69,7 @@ void ntv::node::limit_branches(size_t max) {
 
 	if (aspect > 1.0f) {
 		auto children = std::move(get_children());
-		auto floor = static_cast<int>(std::floorf(aspect));
+		auto floor = static_cast<int>(floorf(aspect));
 
 		size_t size = children.size();
 		size_t copied = 0;
@@ -91,7 +91,7 @@ void ntv::node::limit_branches(size_t max) {
 	}
 }
 
-void ntv::node::compute() {
+void ntv::node::compute() { // NOLINT(misc-no-recursion)
 	tree* root;
 
 	// TODO: Could maybe not be tree type
@@ -129,20 +129,26 @@ ntv::tree::aesthetic_properties_t ntv::tree::get_aesthetic_properties() {
 	aesthetic_properties_t ret{};
 
 	float total_nodes;
-	ImVec2 min_pos = {FLT_MAX, FLT_MAX};
-	ImVec2 max_pos = {FLT_MIN, FLT_MIN};
+	std::vector<glm::vec2> points;
+
+	glm::vec2 min_pos = {FLT_MAX, FLT_MAX};
+	glm::vec2 max_pos = {FLT_MIN, FLT_MIN};
 
 	auto gather_info = [&](ntv::node* item) -> void {
 		auto impl_gather_info = [&](ntv::node* item, auto self_ref, const std::string& id = "", ntv::node* parent = nullptr, size_t index = 0) mutable -> void {// NOLINT(misc-no-recursion)
 			for (auto& child : item->get_children()) {
-				total_nodes++;
 				auto pos = child->get_pos();
+
+				points.push_back(pos);
+
 				min_pos.x = std::min(min_pos.x, pos.x);
 				min_pos.y = std::min(min_pos.y, pos.y);
 				max_pos.x = std::max(max_pos.x, pos.x);
 				max_pos.y = std::max(max_pos.y, pos.y);
 
 				self_ref(child.get(), self_ref);
+
+				total_nodes++;
 			}
 		};
 
@@ -151,7 +157,8 @@ ntv::tree::aesthetic_properties_t ntv::tree::get_aesthetic_properties() {
 
 	gather_info(this);
 
-	gather_info_impl(this, gather_info_impl);
+	// TODO: Handle
+	auto hull = util::get_convex_hull(points);
 
-	return ntv::tree::aesthetic_properties_t();
+	return ret;
 }

@@ -12,7 +12,7 @@ namespace ntv {
 		void set_step(float step);
 
 	private:
-		void compute_branch(node* item, ImVec2 pos, float angle_range, float angle, size_t depth) const;
+		void compute_branch(node* item, glm::vec2 pos, float angle_range, float angle, size_t depth) const;
 
 		float step_size_{};
 	};

@@ -8,12 +8,12 @@ namespace ntv {
 	public:
 		void compute() override;
 
-		void set_size(ImVec2 size);
+		void set_size(glm::vec2 size);
 
 	private:
-		void compute_branch(node* item, ImVec2 pos, ImVec2 size);
+		void compute_branch(node* item, glm::vec2 pos, glm::vec2 size);
 
-		ImVec2 size_{};
+		glm::vec2 size_{};
 	};
 }
 

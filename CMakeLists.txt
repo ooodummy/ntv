@@ -12,9 +12,10 @@ include(hello_imgui_add_app)
 
 find_package(simdjson CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES src/*.*)
 hello_imgui_add_app(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_link_libraries(${PROJECT_NAME} PRIVATE simdjson::simdjson fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE simdjson::simdjson fmt::fmt glm::glm)

@@ -13,7 +13,7 @@ namespace ntv {
 		void set_max_branches(size_t max_branches);
 
 	private:
-		void compute_branch(node* item, const ImVec2& pos, float radius, float branch_angle) const;
+		void compute_branch(node* item, const glm::vec2& pos, float radius, float branch_angle) const;
 
 		float radius_{};
 		size_t max_branches_ = 0;
