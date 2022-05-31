@@ -6,7 +6,7 @@
 namespace ntv {
 	class quad_tree : public tree {
 	public:
-		void compute() override;
+		void compute_impl() override;
 
 		void set_size(glm::vec2 size);
 

@@ -7,7 +7,7 @@ namespace ntv {
 	// https://jgaa.info/accepted/2007/LinYen2007.11.2.pdf
 	class balloon_tree : public tree {
 	public:
-		void compute() override;
+		void compute_impl() override;
 
 		void set_radius(float radius);
 		void set_max_branches(size_t max_branches);

@@ -23,23 +23,6 @@ e_orientation get_orientation(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3) {
 		return counterclockwise;
 }
 
-// Global!!! :(
-glm::vec2 p0;
-
-int sort_compare(const void* v1, const void* v2) {
-	auto* p1 = (glm::vec2*)v1;
-	auto* p2 = (glm::vec2*)v2;
-
-	const auto orientation = get_orientation(p0, *p1, *p2);
-
-	if (orientation == collinear)
-		return glm::distance(p0, *p2) >= glm::distance(p0, *p1) ? -1 : 1;
-	else if (orientation == clockwise)
-		return 1;
-	else
-		return -1;
-}
-
 template <class T>
 T next_top(std::stack<T>& s) {
 	T p = s.top();
@@ -50,36 +33,47 @@ T next_top(std::stack<T>& s) {
 }
 
 // Some very stupid things are done in this function, I'm in a rush...
-std::optional<std::vector<glm::vec2>> util::get_convex_hull(const std::vector<glm::vec2>& points) {
+std::vector<glm::vec2> util::get_convex_hull(std::vector<glm::vec2> points) {
+	if (points.size() < 3)
+		return {};
+
 	// Get the smallest y and if they match then smallest x too
+	float min_y = FLT_MAX;
 	size_t min_y_id = 0;
 
 	for (size_t i = 0; i < points.size(); i++) {
 		const auto current = points[i];
-		const auto min = points[min_y_id];
 
 		// Compare if point is lower  or choose furthest
 		// to the left in case of a tie
-		if (current.y < min.y || (current.y == min.y && current.x <min.x)) {
+		if (current.y < min_y || (current.y == min_y && current.x < min_y)) {
 			min_y_id = i;
+			min_y = current.y;
 		}
 	}
 
-	std::vector<glm::vec2> copy = points;
+	std::swap(points[0], points[min_y_id]);
 
-	std::swap(copy[0], copy[min_y_id]);
+	auto p0 = points[0];
 
-	p0 = copy[0];
+	sort(points.begin(), points.end(), [&p0](glm::vec2 a, glm::vec2 b){
+		const auto orientation = get_orientation(p0, a, b);
 
-	qsort(&copy[1], copy.size() - 1, sizeof(glm::vec2), sort_compare);
+		if (orientation == collinear)
+			return glm::distance(p0, b) >= glm::distance(p0, a);
+		else if (orientation == clockwise)
+			return false;
+		else
+			return true;
+	});
 
 	size_t modified = 1;
 
-	for (size_t i = 0; i < copy.size() - 1; i++) {
-		while (i < copy.size() - 1 && get_orientation(p0, copy[i], copy[i + 1]) == collinear)
+	for (size_t i = 0; i < points.size(); i++) {
+		while (i < points.size() - 1 && get_orientation(p0, points[i], points[i + 1]) == collinear)
 			i++;
 
-		copy[modified] = copy[i];
+		points[modified] = points[i];
 		modified++;
 	}
 
@@ -90,16 +84,15 @@ std::optional<std::vector<glm::vec2>> util::get_convex_hull(const std::vector<gl
 	std::stack<glm::vec2> s;
 
 	for (size_t i = 0; i < 3; i++)
-		s.push(copy[i]);
+		s.push(points[i]);
 
 	for (size_t i = 3; i < modified; i++) {
-		while (s.size() > 1 && get_orientation(next_top(s), s.top(), copy[i]) != counterclockwise)
+		while (s.size() > 1 && get_orientation(next_top(s), s.top(), points[i]) != counterclockwise)
 			s.pop();
 
-		s.push(copy[i]);
+		s.push(points[i]);
 	}
 
-	// So many vectors!
 	std::vector<glm::vec2> hull;
 	hull.reserve(s.size());
 

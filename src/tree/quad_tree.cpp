@@ -21,7 +21,7 @@ void ntv::quad_tree::compute_branch(ntv::node* item, glm::vec2 pos, glm::vec2 si
 	}
 }
 
-void ntv::quad_tree::compute() {
+void ntv::quad_tree::compute_impl() {
 	compute_branch(this, pos_, size_);
 }
 

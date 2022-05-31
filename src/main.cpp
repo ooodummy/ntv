@@ -8,13 +8,13 @@
 
 #undef main
 int main() {
-	auto tree = ntv::make_test_tree<ntv::balloon_tree>();
+	auto tree = ntv::make_test_tree<ntv::radial_tree>();
 	tree->set_label("Primary");
 	tree->set_pos({300, 200});
 	//tree->set_size({500, 500});
-	//tree->set_step(40.0f);
-	tree->set_radius(150.0f);
-	tree->set_max_branches(6);
+	tree->set_step(40.0f);
+	//tree->set_radius(150.0f);
+	//tree->set_max_branches(6);
 
 	tree->compute();
 
@@ -35,30 +35,27 @@ int main() {
 	HelloImGui::Run([&]{
 		tree->draw();
 
-		/*auto draw_list = ImGui::GetWindowDrawList();
-		for (auto& point : points) {
-			draw_list->AddCircleFilled(point, 2.0f, ImColor(255, 255, 255));
-		}
+		const auto& properties = tree->get_aesthetic_properties();
+
+		auto draw_list = ImGui::GetWindowDrawList();
 
 		glm::vec2 prev{};
-		for (auto& point : hull) {
+		for (auto& point : properties.hull) {
 			if (prev != glm::vec2{}) {
-				draw_list->AddLine(prev, point, ImColor(255, 0, 255));
+				draw_list->AddLine(prev, point, ImColor(255, 255, 0));
 			}
 
 			draw_list->AddCircle(point, 4.0f, ImColor(255, 0, 0), 16, 4.0f);
 
 			prev = point;
-		}*/
+		}
 
 		if (ImGui::Begin("Settings")) {
 			/*if (ImGui::Button("Randomize")) {
 				randomize_points();
 			}*/
 			if (ImGui::CollapsingHeader("Aesthetic properties")) {
-				// Do not dare fetch this every frame!
-				const ntv::tree::aesthetic_properties_t properties = {};//tree->get_aesthetic_properties();
-				ImGui::Text("Size: (%f, %f)", properties.size.x, properties.size.y);
+				ImGui::Text("Bounds: (%f, %f, %f, %f)", properties.bounds.x, properties.bounds.y, properties.bounds.w, properties.bounds.z);
 				ImGui::Text("Area: %f", properties.area);
 				ImGui::Text("Aspect ratio: %f", properties.aspect_ratio);
 				ImGui::Text("Subtree separation: %f", properties.subtree_separation);

@@ -13,7 +13,7 @@ void ntv::radial_tree::compute_branch(ntv::node* item, glm::vec2 pos, float angl
 	}
 }
 
-void ntv::radial_tree::compute() {
+void ntv::radial_tree::compute_impl() {
 	compute_branch(this, get_pos(), M_PI * 2.0f, 0.0f, 0);
 }
 

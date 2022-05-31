@@ -37,6 +37,7 @@ namespace ntv {
 
 		void limit_branches(size_t max);
 
+		virtual void compute_impl();
 		virtual void compute();
 
 		void set_link(bool link);
@@ -60,11 +61,13 @@ namespace ntv {
 
 	class tree : public node {
 	public:
+		void compute() override;
+
 		virtual void draw();
 
 		struct aesthetic_properties_t {
-			// Min and max of all the points are used to get size
-			glm::vec2 size;
+			std::vector<glm::vec2> hull;
+			glm::vec4 bounds;
 
 			// Convex hull area of all the points
 			// Or it will just be the size
@@ -82,7 +85,13 @@ namespace ntv {
 			float symmetry;
 		};
 
-		aesthetic_properties_t get_aesthetic_properties();
+		const aesthetic_properties_t& get_aesthetic_properties() const;
+
+	private:
+		static glm::vec4 get_bounds(const std::vector<glm::vec2>& points);
+		void compute_aesthetic_properties();
+
+		aesthetic_properties_t aesthetic_properties;
 	};
 }
 

@@ -7,7 +7,7 @@ namespace ntv {
 	// https://stackoverflow.com/questions/33328245/radial-tree-layout-algorithm
 	class radial_tree : public tree {
 	public:
-		void compute() override;
+		void compute_impl() override;
 
 		void set_step(float step);
 
