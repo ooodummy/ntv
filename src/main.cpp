@@ -1,8 +1,8 @@
+#include "imgui_internal.h"
+#include "test.hpp"
 #include "tree/balloon_tree.hpp"
 #include "tree/quad_tree.hpp"
 #include "tree/radial_tree.hpp"
-
-#include "test.hpp"
 
 #include <fmt/format.h>
 
@@ -18,103 +18,99 @@ int main() {
 
 	tree->compute();
 
-	/*std::vector<glm::vec2> points;
-	std::vector<glm::vec2> hull;
-
-	auto randomize_points = [&points, &hull]() {
-		points = {};
-
-		srand(time(nullptr));
-		for (size_t i = 0; i < 50; i++) {
-			points.emplace_back(rand() % 700 + 100, rand() % 700 + 100);
-		}
-
-		hull = util::get_convex_hull(points).value_or(std::vector<glm::vec2>{});
-	};*/
+	ImGuiID dockspace_id = NULL;
 
 	HelloImGui::Run([&]{
-		tree->draw();
+		ImGui::SetNextWindowPos({0.0f, 0.0f}, ImGuiCond_Once);
+		ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_Once);
 
-		const auto& properties = tree->get_aesthetic_properties();
+		if (ImGui::Begin("Main window", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
+			const auto& properties = tree->get_aesthetic_properties();
 
-		auto draw_list = ImGui::GetWindowDrawList();
+			if (ImGui::DockBuilderGetNode(dockspace_id) == nullptr) {
+				dockspace_id = ImGui::GetID("Dockspace");
+				ImGui::DockBuilderRemoveNode(dockspace_id);
+				ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
 
-		glm::vec2 prev{};
-		for (auto& point : properties.hull) {
-			if (prev != glm::vec2{}) {
-				draw_list->AddLine(prev, point, ImColor(255, 255, 0));
+				ImGuiID dock_main_id = dockspace_id;
+
+				ImGui::DockBuilderDockWindow("Main window", dock_main_id);
+				ImGui::DockBuilderDockWindow("Node view", ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.10f, nullptr, &dockspace_id));
+				ImGui::DockBuilderDockWindow("Settings", ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 1.0f, nullptr, &dockspace_id));
+				ImGui::DockBuilderFinish(dock_main_id);
 			}
 
-			draw_list->AddCircle(point, 4.0f, ImColor(255, 0, 0), 16, 4.0f);
-
-			prev = point;
-		}
-
-		if (ImGui::Begin("Settings")) {
-			/*if (ImGui::Button("Randomize")) {
-				randomize_points();
-			}*/
-			if (ImGui::CollapsingHeader("Aesthetic properties")) {
-				ImGui::Text("Bounds: (%f, %f, %f, %f)", properties.bounds.x, properties.bounds.y, properties.bounds.w, properties.bounds.z);
-				ImGui::Text("Area: %f", properties.area);
-				ImGui::Text("Aspect ratio: %f", properties.aspect_ratio);
-				ImGui::Text("Subtree separation: %f", properties.subtree_separation);
-				ImGui::Text("Closest leaf: %f", properties.closest_leaf);
-				ImGui::Text("Furthest leaf: %f", properties.furthest_leaf);
-				ImGui::Text("Length: %f", properties.length);
-				ImGui::Text("Total edge length: %f", properties.total_edge_length);
-				ImGui::Text("Average edge length: %f", properties.average_edge_length);
-				ImGui::Text("Maximum edge length: %f", properties.maximum_edge_length);
-				ImGui::Text("Uniform edge length: %f", properties.uniform_edge_length);
-				ImGui::Text("Angular resolution: %f", properties.angular_resolution);
-				ImGui::Text("Symmetry: %f", properties.symmetry);
+			if (ImGui::Begin("Node view")) {
+				tree->draw();
 			}
-			if (ImGui::CollapsingHeader("Node list")) {
-				auto add_node_settings = [](ntv::node* item) -> void {
-					auto impl_add_node_settings = [](ntv::node* item, auto self_ref, const std::string& id = "", ntv::node* parent = nullptr, size_t index = 0) mutable -> void {// NOLINT(misc-no-recursion)
-						if (ImGui::CollapsingHeader(fmt::format("{} - {}##main_header{}", item->get_label(), item->get_children().size(), id).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-							if (!parent) {
-								if (ImGui::Button(fmt::format("Compute##compute_button{}", id).c_str())) {
-									item->compute();
-								}
-								ImGui::Text("Position");
-								ImGui::SameLine();
-								ImGui::PushItemWidth(100.0f);
-								if (ImGui::InputFloat(fmt::format("##input_x_pos{}", id).c_str(), &item->pos_.x)) {
-									item->compute();
-								}
-								ImGui::SameLine();
-								if (ImGui::InputFloat(fmt::format("##input_y_pos{}", id).c_str(), &item->pos_.y)) {
-									item->compute();
-								}
-								ImGui::PopItemWidth();
-							}
-							if (ImGui::Button(fmt::format("Add##add_button{}", id).c_str())) {
-								item->make_node();
-								item->compute();
-							}
-							if (parent) {
-								ImGui::SameLine();
-								if (ImGui::Button(fmt::format("Delete##delete_button{}", id).c_str())) {
-									parent->remove_node(index);
-									parent->compute();
-								}
-							}
-							ImGui::Indent(12.0f);
-							for (size_t i = 0; i < item->get_children().size(); i++) {
-								auto& child = item->get_children()[i];
 
-								self_ref(child.get(), self_ref, id + std::to_string(i), item, i);
+			ImGui::End();
+
+			if (ImGui::Begin("Settings")) {
+				if (ImGui::CollapsingHeader("Aesthetic properties")) {
+					ImGui::Text("Bounds: (%f, %f, %f, %f)", properties.bounds.x, properties.bounds.y, properties.bounds.w, properties.bounds.z);
+					ImGui::Text("Area: %f", properties.area);
+					ImGui::Text("Aspect ratio: %f", properties.aspect_ratio);
+					ImGui::Text("Subtree separation: %f", properties.subtree_separation);
+					ImGui::Text("Closest leaf: %f", properties.closest_leaf);
+					ImGui::Text("Furthest leaf: %f", properties.furthest_leaf);
+					ImGui::Text("Length: %f", properties.length);
+					ImGui::Text("Total edge length: %f", properties.total_edge_length);
+					ImGui::Text("Average edge length: %f", properties.average_edge_length);
+					ImGui::Text("Maximum edge length: %f", properties.maximum_edge_length);
+					ImGui::Text("Uniform edge length: %f", properties.uniform_edge_length);
+					ImGui::Text("Angular resolution: %f", properties.angular_resolution);
+					ImGui::Text("Symmetry: %f", properties.symmetry);
+				}
+				if (ImGui::CollapsingHeader("Node list")) {
+					auto add_node_settings = [](ntv::node* item) -> void {
+						auto impl_add_node_settings = [](ntv::node* item, auto self_ref, const std::string& id = "", ntv::node* parent = nullptr, size_t index = 0) mutable -> void {// NOLINT(misc-no-recursion)
+							if (ImGui::CollapsingHeader(fmt::format("{} - {}##main_header{}", item->get_label(), item->get_children().size(), id).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+								if (!parent) {
+									if (ImGui::Button(fmt::format("Compute##compute_button{}", id).c_str())) {
+										item->compute();
+									}
+									ImGui::Text("Position");
+									ImGui::SameLine();
+									ImGui::PushItemWidth(100.0f);
+									if (ImGui::InputFloat(fmt::format("##input_x_pos{}", id).c_str(), &item->pos_.x)) {
+										item->compute();
+									}
+									ImGui::SameLine();
+									if (ImGui::InputFloat(fmt::format("##input_y_pos{}", id).c_str(), &item->pos_.y)) {
+										item->compute();
+									}
+									ImGui::PopItemWidth();
+								}
+								if (ImGui::Button(fmt::format("Add##add_button{}", id).c_str())) {
+									item->make_node();
+									item->compute();
+								}
+								if (parent) {
+									ImGui::SameLine();
+									if (ImGui::Button(fmt::format("Delete##delete_button{}", id).c_str())) {
+										parent->remove_node(index);
+										parent->compute();
+									}
+								}
+								ImGui::Indent(12.0f);
+								for (size_t i = 0; i < item->get_children().size(); i++) {
+									auto& child = item->get_children()[i];
+
+									self_ref(child.get(), self_ref, id + std::to_string(i), item, i);
+								}
+								ImGui::Unindent(12.0f);
 							}
-							ImGui::Unindent(12.0f);
-						}
+						};
+
+						impl_add_node_settings(item, impl_add_node_settings);
 					};
 
-					impl_add_node_settings(item, impl_add_node_settings);
-				};
-
-				add_node_settings(tree.get());
+					add_node_settings(tree.get());
+				}
 			}
+
+			ImGui::End();
 		}
 
 		ImGui::End();

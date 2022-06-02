@@ -1,6 +1,8 @@
 #ifndef _TREE_NODE_HPP_
 #define _TREE_NODE_HPP_
 
+#include <queue>
+
 #include "../util/util.hpp"
 
 #define M_PI 3.14159265358979323846
@@ -20,6 +22,14 @@ namespace ntv {
 
 	protected:
 		std::string label_ = "Undefined";
+	};
+
+	class node;
+
+	// Animation/movement action
+	class action {
+		node* item;
+
 	};
 
 	class node : public item {
@@ -46,6 +56,8 @@ namespace ntv {
 		void set_pos(glm::vec2 pos);
 		[[nodiscard]] glm::vec2 get_pos() const;
 
+		//std::queue<action> actions;
+
 	protected:
 		node* parent_;
 		std::vector<std::unique_ptr<node>> children_;
@@ -53,7 +65,7 @@ namespace ntv {
 		// Used for positioning some tree layout types
 		bool is_link_ = false;
 
-		// !!!
+		// !!! this is a no no !!!
 	public:
 		glm::vec2 pos_;
 		glm::vec2 velocity_;
